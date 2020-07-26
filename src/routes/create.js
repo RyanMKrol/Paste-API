@@ -23,9 +23,13 @@ router.post('/', async (req, res) => {
   };
 
   // store item
-  await storePasteItem(storageItem);
-
-  res.send(storageItem);
+  storePasteItem(storageItem)
+    .then(() => {
+      res.status(201).send();
+    })
+    .catch(() => {
+      res.status(500).send('Internal Server Error');
+    });
 });
 
 export default router;
