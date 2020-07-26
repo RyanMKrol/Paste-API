@@ -1,16 +1,31 @@
 import express from 'express';
 
+import { storePasteItem } from '../api';
+
 const router = express.Router();
 
-// eslint-disable-next-line no-unused-vars
-router.post('/', async (req, res) => {
-  res.send(req.body);
+function generateTtlDate(ttlDays) {
+  const date = new Date();
 
-  const { title, content, ttlDays } = req.body;
-  console.log();
-  console.log(title);
-  console.log(content);
-  console.log(ttlDays);
+  date.setDate(date.getDate() + ttlDays);
+
+  return date.getTime();
+}
+
+router.post('/', async (req, res) => {
+  const ttlDateEpoch = generateTtlDate(req.body.ttlDays);
+
+  const storageItem = {
+    uri: req.body.uri,
+    title: req.body.title,
+    content: req.body.content,
+    ttl: ttlDateEpoch,
+  };
+
+  // store item
+  await storePasteItem(storageItem);
+
+  res.send(storageItem);
 });
 
 export default router;
